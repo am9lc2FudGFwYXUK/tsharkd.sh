@@ -60,7 +60,40 @@ function get_status(){
 
 	for i in $p 
 	do 
-		echo $i 
+		process=`ps -p ${i} -fh `
+		#echo $process 
+		check=`echo $process | awk '{print $5}'`
+		#echo $check 
+		if [[ "$check" == "$TSHRKCMD" ]]; then 
+			echo " Process ID ${i} is $check and RUNNING "
+		else 
+			echo " Process ID ${i} is $check and is NOT A TSHARK INSTANCE"
+		fi
+
+	done
+}
+
+function do_kill(){
+
+	if [[ ! -e "${PIDDIR}${PIDFILE}" ]]; then 
+		echo -e " Does not appear that there is a file: ${PIDDIR}${PIDFILE}"
+		return 
+	fi
+
+	p=`cat ${PIDDIR}${PIDFILE}`
+
+	for i in $p 
+	do 
+		process=`ps -p ${i} -fh `
+		#echo $process 
+		check=`echo $process | awk '{print $5}'`
+		#echo $check 
+		if [[ "$check" == "$TSHRKCMD" ]]; then 
+			echo " Killing process ID ${i}"
+			kill ${i}
+		else 
+			echo " Process ID ${i} is $check and is NOT A TSHARK INSTANCE"
+		fi
 	done
 }
 
@@ -82,12 +115,7 @@ case $1 in
         ;;
 
         stop)
-                PIDS=`cat /var/run/$PIDFILE`
-
-                for i in $PIDS
-                do
-                        kill $i
-                done
+		do_kill
                 ;;
 
         restart)
