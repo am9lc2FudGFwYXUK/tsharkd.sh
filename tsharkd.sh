@@ -1,7 +1,7 @@
 #!/bin/bash
 
-FILTER='tcp port 80 or tcp port 8080 or udp port 53'
-INTERFACES="eth0"
+FILTER='tcp port 443'
+INTERFACES="wlo1"
 PIDDIR="/var/run/"
 PIDFILE="tsharkd.pid"
 STORAGEDIR="/opt/"
@@ -10,10 +10,11 @@ TSHRKCMD="/usr/bin/tshark"
 
 function clean_all(){
 
-  x=`find ${STORAGEDIR} -maxdepth 1 -name '*.pcap'  -type f -print`
+  x=`find ${STORAGEDIR} -maxdepth 1 -name "${FILEPATTERN}*.pcap" -type f -print`
 
   for i in $x
     do
+	echo -ne "Removing file ${i} ...\n"
         rm -f $i
   done
 }
@@ -24,7 +25,7 @@ function dry_run(){
         ${TSHRKCMD} -i ${INTERFACES} -f "${FILTER}"
 }
 
-function help(){
+function do_help(){
 
 	cmd=`basename $0`
 
@@ -95,14 +96,13 @@ function do_kill(){
 			echo " Process ID ${i} is $check and is NOT A TSHARK INSTANCE"
 		fi
 	done
+	rm -f ${PIDDIR}${PIDFILE} 
 }
 
 
-case $1 in
+function do_start(){
 
-        start)
-
-        procs=""
+        procs=" "
 
         for i in $INTERFACES
         do
@@ -110,9 +110,15 @@ case $1 in
                 nohup ${TSHRKCMD} -i $i -b "duration:3600" -b "files:24" -w /opt/SnifferSnapShot-${i}.pcap  -f "${FILTER}"  2>&1 &
                 procs=" $procs $!"
         done
-        echo $procs > ${PIDDIR}${PIDFILE}
+        echo $procs >> ${PIDDIR}${PIDFILE}
+}
 
-        ;;
+
+case $1 in
+
+        start)
+		do_start
+        	;;
 
         stop)
 		do_kill
@@ -134,7 +140,7 @@ case $1 in
                 clean_all
                 ;;
 	help)
-		help
+		do_help
 		;;
         *)
                 echo -e " $0 <help|start|stop|restart|status|dryrun|clean>"
