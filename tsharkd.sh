@@ -10,12 +10,13 @@ TSHRKCMD="/usr/bin/tshark"
 
 function clean_all(){
 
+  local x i 
   x=`find ${STORAGEDIR} -maxdepth 1 -name "${FILEPATTERN}*.pcap" -type f -print`
 
   for i in $x
     do
 	echo -ne "Removing file ${i} ...\n"
-        rm -f $i
+        rm -f "$i"
   done
 }
 
@@ -27,6 +28,7 @@ function dry_run(){
 
 function do_help(){
 
+    local cmd 
 	cmd=`basename $0`
 
 	echo -ne "\n\n"
@@ -57,6 +59,7 @@ function get_status(){
 		return 
 	fi
 
+    local p i
 	p=`cat ${PIDDIR}${PIDFILE}`
 
 	for i in $p 
@@ -81,6 +84,7 @@ function do_kill(){
 		return 
 	fi
 
+    local p i
 	p=`cat ${PIDDIR}${PIDFILE}`
 
 	for i in $p 
@@ -102,6 +106,7 @@ function do_kill(){
 
 function do_start(){
 
+        local procs i 
         procs=" "
 
         for i in $INTERFACES
