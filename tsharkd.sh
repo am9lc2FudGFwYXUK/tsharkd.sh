@@ -59,7 +59,7 @@ function get_status(){
 		return 
 	fi
 
-    local p i
+    local p i process check
 	p=`cat ${PIDDIR}${PIDFILE}`
 
 	for i in $p 
@@ -84,7 +84,7 @@ function do_kill(){
 		return 
 	fi
 
-    local p i
+    local p i process check 
 	p=`cat ${PIDDIR}${PIDFILE}`
 
 	for i in $p 
@@ -106,7 +106,7 @@ function do_kill(){
 
 function do_start(){
 
-        local procs i 
+        local procs i procs
         procs=" "
 
         for i in $INTERFACES
