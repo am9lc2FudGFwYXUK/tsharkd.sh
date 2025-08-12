@@ -107,10 +107,10 @@ function do_start(){
         for i in $INTERFACES
         do
                 echo $i
-                nohup ${TSHRKCMD} -i $i -b "duration:3600" -b "files:24" -w /opt/SnifferSnapShot-${i}.pcap  -f "${FILTER}"  2>&1 &
+                nohup ${TSHRKCMD} -i "$i" -b "duration:3600" -b "files:24" -w /opt/SnifferSnapShot-${i}.pcap  -f "${FILTER}"  2>&1 &
                 procs=" $procs $!"
         done
-        echo $procs >> ${PIDDIR}${PIDFILE}
+        echo $procs > ${PIDDIR}${PIDFILE}
 }
 
 
