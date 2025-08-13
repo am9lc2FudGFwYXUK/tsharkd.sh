@@ -28,7 +28,7 @@ function dry_run(){
 
 function do_help(){
 
-    local cmd 
+	local cmd
 	cmd=`basename $0`
 
 	echo -ne "\n\n"
@@ -59,22 +59,22 @@ function get_status(){
 		return 
 	fi
 
-    local p i process check
+	local p i process check
 	p=`cat ${PIDDIR}${PIDFILE}`
 
-	for i in $p 
-	do 
-		process=`ps -p ${i} -fh `
-		#echo $process 
-		check=`echo $process | awk '{print $5}'`
-		#echo $check 
-		if [[ "$check" == "$TSHRKCMD" ]]; then 
-			echo " Process ID ${i} is $check and RUNNING "
-		else 
-			echo " Process ID ${i} is $check and is NOT A TSHARK INSTANCE"
-		fi
+       for i in $p 
+       do 
+	       process=`ps -p ${i} -fh `
+	       #echo $process 
+	       check=`echo $process | awk '{print $5}'`
+	       #echo $check 
+	       if [[ "$check" == "$TSHRKCMD" ]]; then 
+		       echo " Process ID ${i} is $check and RUNNING "
+	       else 
+		       echo " Process ID ${i} is $check and is NOT A TSHARK INSTANCE"
+	       fi
 
-	done
+       done
 }
 
 function do_kill(){
@@ -84,22 +84,22 @@ function do_kill(){
 		return 
 	fi
 
-    local p i process check 
+	local p i process check
 	p=`cat ${PIDDIR}${PIDFILE}`
 
-	for i in $p 
-	do 
-		process=`ps -p ${i} -fh `
-		#echo $process 
-		check=`echo $process | awk '{print $5}'`
-		#echo $check 
-		if [[ "$check" == "$TSHRKCMD" ]]; then 
-			echo " Killing process ID ${i}"
-			kill ${i}
-		else 
-			echo " Process ID ${i} is $check and is NOT A TSHARK INSTANCE"
-		fi
-	done
+       for i in $p 
+       do 
+	       process=`ps -p ${i} -fh `
+	       #echo $process 
+	       check=`echo $process | awk '{print $5}'`
+	       #echo $check 
+	       if [[ "$check" == "$TSHRKCMD" ]]; then 
+		       echo " Killing process ID ${i}"
+		       kill ${i}
+	       else 
+		       echo " Process ID ${i} is $check and is NOT A TSHARK INSTANCE"
+	       fi
+       done
 	rm -f ${PIDDIR}${PIDFILE} 
 }
 
@@ -107,15 +107,16 @@ function do_kill(){
 function do_start(){
 
         local procs i procs
-        procs=" "
+	local procs i
+	procs=" "
 
-        for i in $INTERFACES
-        do
-                echo $i
-                nohup ${TSHRKCMD} -i "$i" -b "duration:3600" -b "files:24" -w /opt/SnifferSnapShot-${i}.pcap  -f "${FILTER}"  2>&1 &
-                procs=" $procs $!"
-        done
-        echo $procs > ${PIDDIR}${PIDFILE}
+	for i in $INTERFACES
+	do
+		echo $i
+		nohup ${TSHRKCMD} -i $i -b "duration:3600" -b "files:24" -w /opt/SnifferSnapShot-${i}.pcap  -f "${FILTER}"  2>&1 &
+		procs=" $procs $!"
+	done
+	echo $procs >> ${PIDDIR}${PIDFILE}
 }
 
 
